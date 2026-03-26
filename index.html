@@ -167,11 +167,8 @@
             <div><strong>Brasil</strong><span>atuação nacional</span></div>
           </div>
         </div>
-        <form class="contact-form reveal" action="https://formsubmit.co/contato@emassets.com.br" method="POST">
-          <input type="hidden" name="_subject" value="Novo lead - Site E&M ASSETS" />
-          <input type="hidden" name="_captcha" value="false" />
-          <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_next" value="https://emassets.com.br/?enviado=true#contato" />
+        <form class="contact-form reveal" action="send-email.php" method="POST">
+          <input type="text" name="website" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px;opacity:0;" />
 
           <label for="nome">Nome</label>
           <input id="nome" name="nome" type="text" placeholder="Seu nome completo" required />

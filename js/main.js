@@ -56,7 +56,8 @@ tilts.forEach((card) => {
 });
 
 const params = new URLSearchParams(window.location.search);
-if (params.get("enviado") === "true") {
+const sentStatus = params.get("enviado");
+if (sentStatus === "true") {
   const msg = document.createElement("div");
   msg.textContent = "Mensagem enviada com sucesso. Em breve entraremos em contato.";
   msg.style.position = "fixed";
@@ -78,4 +79,28 @@ if (params.get("enviado") === "true") {
     const url = window.location.pathname + "#contato";
     window.history.replaceState({}, "", url);
   }, 3800);
+}
+
+if (sentStatus === "erro") {
+  const msg = document.createElement("div");
+  msg.textContent = "Nao foi possivel enviar agora. Tente novamente ou chame no WhatsApp.";
+  msg.style.position = "fixed";
+  msg.style.top = "84px";
+  msg.style.left = "50%";
+  msg.style.transform = "translateX(-50%)";
+  msg.style.zIndex = "200";
+  msg.style.padding = "10px 14px";
+  msg.style.borderRadius = "999px";
+  msg.style.background = "rgba(248, 113, 113, 0.16)";
+  msg.style.border = "1px solid rgba(248, 113, 113, 0.55)";
+  msg.style.color = "#7f1d1d";
+  msg.style.backdropFilter = "blur(8px)";
+  document.body.appendChild(msg);
+
+  setTimeout(() => {
+    msg.remove();
+    params.delete("enviado");
+    const url = window.location.pathname + "#contato";
+    window.history.replaceState({}, "", url);
+  }, 4300);
 }
