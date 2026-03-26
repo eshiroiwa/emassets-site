@@ -1,0 +1,23 @@
+{
+  "name": "emassets.com.br",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eshiroiwa/emassets-site.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eshiroiwa/emassets-site/issues"
+  },
+  "homepage": "https://github.com/eshiroiwa/emassets-site#readme",
+  "dependencies": {
+    "nodemailer": "^8.0.4"
+  }
+}
