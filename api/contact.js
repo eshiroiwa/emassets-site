@@ -79,6 +79,19 @@ async function readBody(req) {
   if (req.body && typeof req.body === "object") {
     return req.body;
   }
+  if (typeof req.body === "string") {
+    const contentType = String(req.headers["content-type"] || "").toLowerCase();
+    if (contentType.includes("application/json")) {
+      try {
+        return JSON.parse(req.body);
+      } catch {
+        return {};
+      }
+    }
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      return Object.fromEntries(new URLSearchParams(req.body));
+    }
+  }
 
   const raw = await new Promise((resolve, reject) => {
     let data = "";

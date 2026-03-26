@@ -104,3 +104,49 @@ if (sentStatus === "erro") {
     window.history.replaceState({}, "", url);
   }, 4300);
 }
+
+const contactForm = document.querySelector(".contact-form");
+if (contactForm) {
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const submitButton = contactForm.querySelector("button[type='submit']");
+    const originalText = submitButton ? submitButton.textContent : "";
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Enviando...";
+    }
+
+    try {
+      const formData = new FormData(contactForm);
+      const payload = Object.fromEntries(formData.entries());
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
+      }
+
+      if (response.ok) {
+        window.location.href = "/?enviado=true#contato";
+      } else {
+        window.location.href = "/?enviado=erro#contato";
+      }
+    } catch {
+      window.location.href = "/?enviado=erro#contato";
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText || "Enviar dados";
+      }
+    }
+  });
+}
