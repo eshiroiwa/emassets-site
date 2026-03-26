@@ -24,13 +24,13 @@ module.exports = async (req, res) => {
     return res.redirect(303, "/?enviado=erro#contato");
   }
 
-  const smtpHost = process.env.SMTP_HOST || "smtp.hostinger.com";
-  const smtpPort = Number(process.env.SMTP_PORT || 465);
+  const smtpHost = process.env.SMTP_HOST || "";
+  const smtpPort = Number(process.env.SMTP_PORT || 0);
   const smtpUser = process.env.SMTP_USER || "";
   const smtpPass = process.env.SMTP_PASS || "";
-  const toEmail = process.env.CONTACT_TO || "contato@emassets.com.br";
+  const toEmail = process.env.CONTACT_TO || "";
 
-  if (!smtpUser || !smtpPass) {
+  if (!smtpHost || !smtpPort || !smtpUser || !smtpPass || !toEmail) {
     return res.redirect(303, "/?enviado=erro#contato");
   }
 
