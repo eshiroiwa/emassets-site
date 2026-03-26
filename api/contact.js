@@ -5,15 +5,23 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { nome, email, telefone, objetivo, mensagem, website } = req.body || {};
+  const body = await readBody(req);
+  const {
+    nome = "",
+    email = "",
+    telefone = "",
+    objetivo = "",
+    mensagem = "",
+    website = ""
+  } = body;
 
   // Honeypot
   if (website) {
-    return res.redirect(302, "/?enviado=true#contato");
+    return res.redirect(303, "/?enviado=true#contato");
   }
 
   if (!nome || !email || !telefone || !objetivo) {
-    return res.redirect(302, "/?enviado=erro#contato");
+    return res.redirect(303, "/?enviado=erro#contato");
   }
 
   const smtpHost = process.env.SMTP_HOST || "smtp.hostinger.com";
@@ -23,7 +31,7 @@ module.exports = async (req, res) => {
   const toEmail = process.env.CONTACT_TO || "contato@emassets.com.br";
 
   if (!smtpUser || !smtpPass) {
-    return res.redirect(302, "/?enviado=erro#contato");
+    return res.redirect(303, "/?enviado=erro#contato");
   }
 
   try {
@@ -52,9 +60,9 @@ module.exports = async (req, res) => {
       `
     });
 
-    return res.redirect(302, "/?enviado=true#contato");
+    return res.redirect(303, "/?enviado=true#contato");
   } catch (error) {
-    return res.redirect(302, "/?enviado=erro#contato");
+    return res.redirect(303, "/?enviado=erro#contato");
   }
 };
 
@@ -65,4 +73,40 @@ function escapeHtml(text) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+async function readBody(req) {
+  if (req.body && typeof req.body === "object") {
+    return req.body;
+  }
+
+  const raw = await new Promise((resolve, reject) => {
+    let data = "";
+    req.on("data", (chunk) => {
+      data += chunk;
+      if (data.length > 1_000_000) {
+        reject(new Error("Payload too large"));
+      }
+    });
+    req.on("end", () => resolve(data));
+    req.on("error", reject);
+  });
+
+  if (!raw) return {};
+
+  const contentType = String(req.headers["content-type"] || "").toLowerCase();
+
+  if (contentType.includes("application/json")) {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return {};
+    }
+  }
+
+  if (contentType.includes("application/x-www-form-urlencoded")) {
+    return Object.fromEntries(new URLSearchParams(raw));
+  }
+
+  return {};
 }
